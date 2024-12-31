@@ -2,6 +2,7 @@ const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const input = require("input"); // Для ввода данных в консоли
 const { NewMessage } = require("telegram/events");
+const { user_ignore } = require("./ignoreUser");
 const fs = require("fs"); // Для работы с файлами
 const { say } = require("./gpt");
 // Ваши данные
@@ -40,8 +41,11 @@ if (fs.existsSync("session.txt")) {
     if (message.isPrivate) {
       const sender = await client.getEntity(message.fromId.userId);
       console.log(JSON.parse(JSON.stringify(sender)));
-      if (sender.username === "O101O1O1O") {
-        console.log("Сообщение отправлено вами, ответ не требуется.");
+
+      let userInBlock = user_ignore.some((user) => user === sender.username);
+
+      if (userInBlock) {
+        console.log("Сообщение, ответ не требуется.", sender.username);
         return;
       }
 
@@ -54,7 +58,7 @@ if (fs.existsSync("session.txt")) {
       await client.sendMessage(message.peerId, {
         message: gemini,
       });
-      console.log(`Ответ отправлен пользователю: ${message.peerId.userId}`);
+      console.log(`Ответ отправлен пользователю: ${sender.firstName}`);
     }
   }, new NewMessage());
 
