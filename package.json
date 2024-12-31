@@ -9,6 +9,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "chatgpt": "^5.2.5",
+    "dotenv": "^16.4.7",
+    "freegptjs": "^0.0.2",
     "input": "^1.0.1",
     "telegram": "^2.26.16"
   }

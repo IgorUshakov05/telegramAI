@@ -3,7 +3,7 @@ const { StringSession } = require("telegram/sessions");
 const input = require("input"); // Для ввода данных в консоли
 const { NewMessage } = require("telegram/events");
 const fs = require("fs"); // Для работы с файлами
-
+const { say } = require("./gpt");
 // Ваши данные
 const apiId = 24327124;
 const apiHash = "03930a6ab2cd5b3a244b898083b74284";
@@ -36,11 +36,11 @@ if (fs.existsSync("session.txt")) {
 
   client.addEventHandler(async (event) => {
     const message = event.message;
-    const sender = await client.getEntity(message.fromId.userId);
+    await client.markAsRead(message.peerId);
     if (message.isPrivate) {
       const sender = await client.getEntity(message.fromId.userId);
       console.log(JSON.parse(JSON.stringify(sender)));
-      if (sender.username === 'O101O1O1O') {
+      if (sender.username === "O101O1O1O") {
         console.log("Сообщение отправлено вами, ответ не требуется.");
         return;
       }
@@ -50,9 +50,9 @@ if (fs.existsSync("session.txt")) {
           message.peerId.userId
         }): ${message.message}`
       );
-
+      let gemini = await say(message.message, sender.firstName);
       await client.sendMessage(message.peerId, {
-        message: `Здравствуйте, ${sender.firstName}!\n\nСпасибо за ваше сообщение. 🌟 Мы ценим вашу связь с нами и обязательно ответим вам в ближайшее время.`,
+        message: gemini,
       });
       console.log(`Ответ отправлен пользователю: ${message.peerId.userId}`);
     }
